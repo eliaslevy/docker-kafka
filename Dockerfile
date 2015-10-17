@@ -4,9 +4,12 @@ ENV KAFKA_VERSION 0.8.2.2
 ENV SCALA_VERSION 2.10
 ENV KAFKA_RELEASE ${SCALA_VERSION}-${KAFKA_VERSION}
 
-RUN mkdir -p /kafka/config /kafka/data /kafka/logs && \
+RUN apt-get update && \
+		DEBIAN_FRONTEND=noninteractive apt-get install -y jq && \
+		mkdir -p /kafka/config /kafka/data /kafka/logs && \
 		cd /tmp && \
-		curl -sSLO http://mirrors.ibiblio.org/apache/kafka/${KAFKA_VERSION}/kafka_${KAFKA_RELEASE}.tgz && \
+		MIRROR=`curl --stderr /dev/null https://www.apache.org/dyn/closer.cgi\?as_json\=1 | jq -r '.preferred'` && \
+		curl -sSLO "${MIRROR}/kafka/${KAFKA_VERSION}/kafka_${KAFKA_RELEASE}.tgz" && \
 		curl -sSLO https://dist.apache.org/repos/dist/release/kafka/${KAFKA_VERSION}/kafka_${KAFKA_RELEASE}.tgz.asc && \
 		curl -sSL  https://kafka.apache.org/KEYS | gpg -q --import - && \
 		gpg -q --verify kafka_${KAFKA_RELEASE}.tgz.asc && \
