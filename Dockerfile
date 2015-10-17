@@ -33,7 +33,7 @@ ENV PATH="/kafka/bin:$PATH" \
 
 ENTRYPOINT [ "/entrypoint.sh" ]
 
-CMD [ "kafka-server-start.sh /kafka/config/server.properties" ]
+CMD [ "kafka-server-start.sh", "/kafka/config/server.properties" ]
 
 # Kafka, JMX
 EXPOSE 9092 7203
