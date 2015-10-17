@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "ENTRYPOINT"
-echo $ZOOKEEPER_CONNECT
+echo "Using ZK at ${ZOOKEEPER_CONNECT:=zookeeper:2181/kafka}"
 
 echo create /kafka_id_alloc 0 | /kafka/bin/zookeeper-shell.sh $ZOOKEEPER_CONNECT &> /dev/null
 BROKER_ID=`echo set /kafka_id_alloc 0 | /kafka/bin/zookeeper-shell.sh $ZOOKEEPER_CONNECT 2>&1 | grep dataVersion | cut -d' ' -f 3`
