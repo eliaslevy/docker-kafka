@@ -6,7 +6,7 @@ ENV KAFKA_RELEASE ${SCALA_VERSION}-${KAFKA_VERSION}
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y jq && \
-    mkdir -p /kafka/config /kafka/data /kafka/logs && \
+    mkdir -p /kafka/config /kafka/data /kafka/logs /kafka/templates && \
     cd /tmp && \
     MIRROR=`curl --stderr /dev/null https://www.apache.org/dyn/closer.cgi\?as_json\=1 | jq -r '.preferred'` && \
     curl -sSLO "${MIRROR}/kafka/${KAFKA_VERSION}/kafka_${KAFKA_RELEASE}.tgz" && \
@@ -18,11 +18,9 @@ RUN apt-get update && \
     cd /kafka/libs && \
     curl -sSLO http://repo1.maven.org/maven2/org/slf4j/slf4j-log4j12/1.7.9/slf4j-log4j12-1.7.9.jar && \
     useradd --system -d /kafka --user-group kafka && \
-    touch /kafka/config/server.properties && \
-    chmod a+rwx /kafka/data /kafka/logs && \
-    chmod a+rw  /kafka/config/server.properties
+    chmod a+rwx /kafka/data /kafka/logs 
 
-ADD  config /kafka/config/
+ADD  config /kafka/templates/
 COPY entrypoint.sh /
 
 ENV PATH="/kafka/bin:$PATH" \
