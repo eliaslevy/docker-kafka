@@ -8,7 +8,7 @@ RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y jq && \
     mkdir -p /kafka/config /kafka/data /kafka/logs /kafka/templates && \
     cd /tmp && \
-    MIRROR=`curl --stderr /dev/null https://www.apache.org/dyn/closer.cgi\?as_json\=1 | jq -r '.preferred'` && \
+    MIRROR=`curl -sSL https://www.apache.org/dyn/closer.cgi\?as_json\=1 | jq -r '.preferred'` && \
     curl -sSLO "${MIRROR}/kafka/${KAFKA_VERSION}/kafka_${KAFKA_RELEASE}.tgz" && \
     curl -sSLO https://dist.apache.org/repos/dist/release/kafka/${KAFKA_VERSION}/kafka_${KAFKA_RELEASE}.tgz.asc && \
     curl -sSL  https://kafka.apache.org/KEYS | gpg -q --import - && \
@@ -18,7 +18,7 @@ RUN apt-get update && \
     cd /kafka/libs && \
     curl -sSLO http://repo1.maven.org/maven2/org/slf4j/slf4j-log4j12/1.7.9/slf4j-log4j12-1.7.9.jar && \
     useradd --system -d /kafka --user-group kafka && \
-    chmod a+rwx /kafka/data /kafka/logs 
+    chmod a+rwx /kafka/data /kafka/logs
 
 ADD  config /kafka/templates/
 COPY entrypoint.sh /
