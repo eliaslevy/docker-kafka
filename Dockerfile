@@ -5,7 +5,7 @@ ENV SCALA_VERSION 2.10
 ENV KAFKA_RELEASE ${SCALA_VERSION}-${KAFKA_VERSION}
 
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y jq && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y ca-certificates jq && \
     mkdir -p /kafka/config /kafka/data /kafka/logs /kafka/templates && \
     cd /tmp && \
     MIRROR=`curl -sSL https://www.apache.org/dyn/closer.cgi\?as_json\=1 | jq -r '.preferred'` && \
