@@ -26,7 +26,7 @@ COPY entrypoint.sh /
 
 ENV PATH="/kafka/bin:$PATH" \
     JMX_PORT=7203 \
-    KAFKA_JVM_PERFORMANCE_OPTS="-server -XX:PermSize=48m -XX:MaxPermSize=48m -XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35 -XX:+DisableExplicitGC -Djava.awt.headless=true"
+    KAFKA_JVM_PERFORMANCE_OPTS="-XX:MetaspaceSize=48m -XX:MaxMetaspaceSize=48m -XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35 -XX:+DisableExplicitGC -Djava.awt.headless=true"
 
 #USER kafka
 
