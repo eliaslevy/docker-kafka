@@ -14,15 +14,19 @@ if [ ! -f /kafka/config/server.properties ]; then
 
 	echo "Using ZK at ${ZOOKEEPER_CONNECT}"
 
-	# Create the ZK root.
+	# Create the ZK root if it doesn't already exist.
 	echo create "$ZOOKEEPER_ROOT" 0 | /kafka/bin/zookeeper-shell.sh $ZOOKEEPER_SERVERS &> /dev/null
 
-	# Create node to use for id allocation.
-	echo create /kafka_id_alloc 0 | /kafka/bin/zookeeper-shell.sh $ZOOKEEPER_CONNECT &> /dev/null
+	if [ -z $BROKER_ID ]; then
+		# Create node to use for id allocation.
+		echo create /kafka_id_alloc 0 | /kafka/bin/zookeeper-shell.sh $ZOOKEEPER_CONNECT &> /dev/null
 
-	# Allocate an id by writing to a node and retriving its version number.
-	BROKER_ID=`echo set /kafka_id_alloc 0 | /kafka/bin/zookeeper-shell.sh $ZOOKEEPER_CONNECT 2>&1 | grep dataVersion | cut -d' ' -f 3`
-	echo "Allocated broker id ${BROKER_ID}."
+		# Allocate an id by writing to a node and retriving its version number.
+		BROKER_ID=`echo set /kafka_id_alloc 0 | /kafka/bin/zookeeper-shell.sh $ZOOKEEPER_CONNECT 2>&1 | grep dataVersion | cut -d' ' -f 3`
+		echo "Allocated broker id ${BROKER_ID}."
+	else
+		echo "Using broker id ${BROKER_ID}."
+	fi
 
 	# Create the config file.
 	sed -e "s|\${BROKER_ID}|$BROKER_ID|g" \
