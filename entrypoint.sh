@@ -30,6 +30,7 @@ if [ ! -f /kafka/config/server.properties ]; then
 
 	# Create the config file.
 	sed -e "s|\${BROKER_ID}|$BROKER_ID|g" \
+			-e "s|\${ADVERTISED_HOST_NAME}|$ADVERTISED_HOST_NAME|g " \
 			-e "s|\${ZOOKEEPER_CONNECT}|$ZOOKEEPER_CONNECT|g" /kafka/templates/server.properties.template > /kafka/config/server.properties
 
 	cp /kafka/templates/log4j.properties /kafka/templates/tools-log4j.properties /kafka/config
