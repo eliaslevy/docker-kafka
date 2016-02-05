@@ -15,8 +15,8 @@ zookeeper.connect=${ZOOKEEPER_CONNECT}
 # Timeout in ms for connecting to zookeeper
 zookeeper.connection.timeout.ms=6000
 
-# ZooKeeper session timeout. 
-#zookeeper.session.timeout.ms=6000
+# ZooKeeper session timeout.
+zookeeper.session.timeout.ms=30000
 
 ############################# Socket Server Settings #############################
 
