@@ -5,12 +5,7 @@
 # in the same node.
 if [ ! -f /kafka/config/server.properties ]; then
 	# Create a ZK connection string for the servers and the root.
-	ZOOKEEPER_CONNECT=()
-	IFS=\, read -a servers <<< "${ZOOKEEPER_SERVERS:=zookeeper:2181}"
-	for server in "${servers[@]}"; do 
-		ZOOKEEPER_CONNECT+=("$server${ZOOKEEPER_ROOT:=/kafka}")
-	done
-	ZOOKEEPER_CONNECT=$(IFS=, ; echo "${ZOOKEEPER_CONNECT[*]}")
+	ZOOKEEPER_CONNECT=$ZOOKEEPER_SERVERS${ZOOKEEPER_ROOT:=/kafka}
 
 	echo "Using ZK at ${ZOOKEEPER_CONNECT}"
 
