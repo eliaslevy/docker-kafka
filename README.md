@@ -1,4 +1,8 @@
-Kafka Docker image configured to dynamically and atomically allocate itself a broker id through ZooKeeper.  It expects a comma delimited list of ZooKeeper servers via the `ZOOKEEPER_SERVERS` environment variable and and an optional root path within ZooKeeper were to store it's state via `ZOOKEEPER_ROOT` (it defaults to `/kafka`).
+Kafka Docker image.  It expects a comma delimited list of ZooKeeper servers via the 
+`ZOOKEEPER_SERVERS` environment variable, an optional root path within ZooKeeper were to
+store it's state via `ZOOKEEPER_ROOT` (it defaults to `/kafka`), and an optional hostname for
+the broker to adversize to clients via `ADVERTISED_HOST_NAME` (it defaults to the output of 
+`hostname -f`).
 
 It can be executed in Kuebernetes using a replication controller using a config like:
 

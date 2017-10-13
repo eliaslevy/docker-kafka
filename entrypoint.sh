@@ -1,34 +1,20 @@
 #!/bin/bash
 
-# Only allocate a broker id and configure the system the first time this container starts.
-# A Kubernetes volume mount will preserve the config if the container dies and is restarted
-# in the same node.
+# Only configure the system the first time this container starts. A Kubernetes volume mount 
+# will preserve the config if the container dies and is restarted in the same node.
 if [ ! -f /kafka/config/server.properties ]; then
-	# Create a ZK connection string for the servers and the root.
-	ZOOKEEPER_CONNECT=$ZOOKEEPER_SERVERS${ZOOKEEPER_ROOT:=/kafka}
+  # Create a ZK connection string for the servers and the root.
+  ZOOKEEPER_CONNECT=$ZOOKEEPER_SERVERS${ZOOKEEPER_ROOT:=/kafka}
 
-	echo "Using ZK at ${ZOOKEEPER_CONNECT}"
+  if [ -z $ADVERTISED_HOST_NAME ]; then
+    ADVERTISED_HOST_NAME=$(hostname -f)
+    echo "Advertizing host name ${ADVERTISED_HOST_NAME}."
+  fi
 
-	# Create the ZK root if it doesn't already exist.
-	echo create "$ZOOKEEPER_ROOT" 0 | /kafka/bin/zookeeper-shell.sh $ZOOKEEPER_SERVERS &> /dev/null
-
-	if [ -z $BROKER_ID ]; then
-		# Create node to use for id allocation.
-		echo create /kafka_id_alloc 0 | /kafka/bin/zookeeper-shell.sh $ZOOKEEPER_CONNECT &> /dev/null
-
-		# Allocate an id by writing to a node and retriving its version number.
-		BROKER_ID=`echo set /kafka_id_alloc 0 | /kafka/bin/zookeeper-shell.sh $ZOOKEEPER_CONNECT 2>&1 | grep dataVersion | cut -d' ' -f 3`
-		echo "Allocated broker id ${BROKER_ID}."
-	else
-		echo "Using broker id ${BROKER_ID}."
-	fi
-
-	# Create the config file.
-	sed -e "s|\${BROKER_ID}|$BROKER_ID|g" \
-			-e "s|\${ADVERTISED_HOST_NAME}|$ADVERTISED_HOST_NAME|g " \
-			-e "s|\${ZOOKEEPER_CONNECT}|$ZOOKEEPER_CONNECT|g" /kafka/templates/server.properties.template > /kafka/config/server.properties
-
-	cp /kafka/templates/log4j.properties /kafka/templates/tools-log4j.properties /kafka/config
+  # Create the config file.
+  sed -i \
+      -e "s|\${ADVERTISED_HOST_NAME}|$ADVERTISED_HOST_NAME|g " \
+      -e "s|\${ZOOKEEPER_CONNECT}|$ZOOKEEPER_CONNECT|g" /kafka/templates/server.properties
 fi
 
 cd /kafka
